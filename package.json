@@ -1,7 +1,7 @@
 {
 	"name": "code-blocks-comments",
 	"version": "1.0.0",
-	"description": "Comments in codeblocks (https://obsidian.md)",
+	"description": "Comment in codeblocks (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
