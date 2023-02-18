@@ -1,9 +1,9 @@
 {
-	"id": "code-blocks-comments",
-	"name": "Code Blocks Comments ",
+	"id": "advanced-comments",
+	"name": "Advanced Comments ",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Comment in codeblocks",
+	"description": "Normal Comments or langage related (in codeblocks)",
 	"author": "Obsidian",
 	"authorUrl": "https://obsidian.md",
 	"fundingUrl": "https://obsidian.md/pricing",
