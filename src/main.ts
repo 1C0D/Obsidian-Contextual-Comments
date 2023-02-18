@@ -1,17 +1,16 @@
-
 import { Editor, Plugin } from "obsidian";
 import { commentSelection } from "./CommentHelper";
 
-export default class CodeBlocksComments extends Plugin {
+export default class AdvancedComments extends Plugin {
 	async onload() {
 		this.addCommand({
-			id: "better-comments",
-			name: "Code Blocks Comments",
-			editorCallback: (editor) => this.codeBlocksComments(editor),
+			id: "advanced-comments",
+			name: "Advanced Comments",
+			editorCallback: (editor) => this.advancedComments(editor),
 		});
 	}
 
-	codeBlocksComments = (editor: Editor): void => {
+	advancedComments = (editor: Editor): void => {
 		const { selection, value } = this.getSelectionAndValue(editor);
 
 		if (!selection) {
@@ -38,7 +37,7 @@ export default class CodeBlocksComments extends Plugin {
 		// 	lastLine: ${lastLine}, 
 		// 	firstLineChar: ${firstLineChar}, 
 		// 	lastLineChar: ${lastLineChar}`
-		);
+		// );
 		if (useSelection)
 			editor.setSelection(
 				{ line: firstLine, ch: firstLineChar },
