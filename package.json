@@ -1,8 +1,8 @@
 {
-	"name": "code-blocks-comments",
+	"name": "advanced-comments",
 	"version": "1.0.0",
-	"description": "Comment in codeblocks (https://obsidian.md)",
-	"main": "main.js",
+	"description": "Normal comments or langage related (in codeblocks)",
+	"main": "src/main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
