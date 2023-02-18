@@ -75,7 +75,7 @@ export function commentSelection({
 		const pattern = /^(\s*%%\s+.+\s+%%\s*)$/gms;
 		if (pattern.test(selection)) {
 			commentedSelection = selection.replace(
-				/^(\s*%%\s+)([^%%]*)(\s+%%\s*)$/gms,
+				/^(\s*%%\s+)(.*)(\s+%%\s*)$/gms,
 				`$2`
 			);
 		} else {
