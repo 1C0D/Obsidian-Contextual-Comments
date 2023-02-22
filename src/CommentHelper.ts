@@ -1,17 +1,6 @@
-type CommentResult = {
-	commentedSelection: string;
-	useSelection: boolean;
-};
+import { Editor } from "obsidian";
 
-export function commentSelection({
-	selection,
-	codeBlockType,
-}: {
-	selection: string;
-	codeBlockType: string | null;
-}): CommentResult {
-	let commentedSelection = "";
-	let useSelection = false;
+function commentType(codeBlockType: string) {
 	const cLikeTypes = [
 		"c",
 		"cpp",
@@ -30,58 +19,97 @@ export function commentSelection({
 		"css",
 	];
 	const hashTypes = ["python", "ruby", "bash"];
-	const lua = ["lua", "sql"]; // --
-	const html = ["html", "xml"]; //<!-- -->
+	const lua = ["lua", "sql"];
+	const html = ["html", "xml"];
 
-	if (codeBlockType && cLikeTypes.includes(codeBlockType.toLowerCase())) {
-		const pattern = /^(\s*\/\/\s*.*)$/gm;
-		if (pattern.test(selection)) {
-			commentedSelection = selection.replace(
-				/^(\s*\/\/\s*)(.*)$/gm,
-				`$2`
-			);
-		} else {
-			commentedSelection = selection.replace(/^(.*)$/gm, `// $1`);
-		}
-	} else if (
-		codeBlockType &&
-		hashTypes.includes(codeBlockType.toLowerCase())
-	) {
-		const pattern = /^(\s*#\s*.*)$/gm;
-		if (pattern.test(selection)) {
-			commentedSelection = selection.replace(/^(\s*#\s*)(.*)$/gm, `$2`);
-		} else {
-			commentedSelection = selection.replace(/^(.*)$/gm, `# $1`);
-		}
-	} else if (codeBlockType && lua.includes(codeBlockType.toLowerCase())) {
-		const pattern = /^(\s*--\s+.*)$/gm;
-		if (pattern.test(selection)) {
-			commentedSelection = selection.replace(/^(\s*--\s+)(.*)$/gm, `$2`);
-		} else {
-			commentedSelection = selection.replace(/^(.*)$/gm, `-- $1`);
-		}
-	} else if (codeBlockType && html.includes(codeBlockType.toLowerCase())) {
-		const pattern = /^(\s*<!--\s+.+\s+-->\s*)$/gm;
-		if (pattern.test(selection)) {
-			commentedSelection = selection.replace(
-				/^(\s*<!--\s+)(.*)(\s+-->\s*)$/gm,
-				`$2`
-			);
-		} else {
-			commentedSelection = selection.replace(/^(.*)$/gm, `<!-- $1  -->`);
-		}
-	} else {
-		useSelection = true;
-		const pattern = /^(\s*%%\s+.+\s+%%\s*)$/gms;
-		if (pattern.test(selection)) {
-			commentedSelection = selection.replace(
-				/^(\s*%%\s+)(.*)(\s+%%\s*)$/gms,
-				`$2`
-			);
-		} else {
-			commentedSelection = selection.replace(/^(.*)$/gms, `%% $1 %%`);
+	const types = {
+		cLikeTypes: cLikeTypes,
+		hashTypes: hashTypes,
+		lua: lua,
+		html: html,
+	};
+
+	for (const [name, values] of Object.entries(types)) {
+		if (values.includes(codeBlockType.toLowerCase())) {
+			return name;
 		}
 	}
 
-	return { commentedSelection, useSelection };
+	return "unknown";
+}
+
+export function commentSelection(
+	editor: Editor,
+	selection: string,
+	codeBlockType: string | null
+) {
+	let commentedSelection = "";
+
+	if (codeBlockType) {
+		const varName = commentType(codeBlockType);
+		if (varName === "cLikeTypes") {
+			const pattern = /^\/\/\s?(.*)$/gm;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gm, `// $1`);
+			}
+		} else if (varName === "hashTypes") {
+			const pattern = /^#\s?(.*)$/gm;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gm, `# $1`);
+			}
+		} else if (varName === "lua") {
+			const pattern = /^--\s?(.*)$/gm;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gm, `-- $1`);
+			}
+		} else {
+			const pattern = /^<!--\s?(.*)\s?-->$/gms;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(
+					/^(.*)$/gms,
+					`<!-- $1  -->`
+				);
+			}
+		}
+	} else {
+		const pattern = /^%%(.*)%%$/gms;
+		if (pattern.test(selection)) {
+			commentedSelection = selection.replace(pattern, `$1`);
+		} else {
+			commentedSelection = selection.replace(/^(.*)$/gms, `%%$1%%`);
+		}
+	}
+
+
+	const {pi, pr} = getPosToOffset(editor, selection)
+	const from = editor.offsetToPos(pi);
+	const to = editor.offsetToPos(pr);
+
+	editor.replaceRange(commentedSelection, from, to);
+}
+
+export function getPosToOffset(editor:Editor, sel:string) {
+	let i = editor.getCursor("from");
+	let r = editor.getCursor("to");
+	let pi = editor.posToOffset(i);
+	let pr = editor.posToOffset(r);
+
+	if (pi === pr) {
+		const curs = editor.getCursor();
+		const line = curs.line;
+		const value = sel = editor.getLine(line);
+		i = { line: line, ch: 0 };
+		r = { line: line, ch: value.length };
+		pi = editor.posToOffset(i);
+		pr = editor.posToOffset(r);
+	}
+	return {pi,pr,sel}
 }
