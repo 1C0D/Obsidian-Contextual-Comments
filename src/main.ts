@@ -1,5 +1,5 @@
-import { Editor, Plugin } from "obsidian";
-import { commentSelection } from "./CommentHelper";
+import { Editor, MarkdownView, Plugin } from "obsidian";
+import { commentSelection, getPosToOffset } from "./CommentHelper";
 
 export default class AdvancedComments extends Plugin {
 	async onload() {
@@ -8,41 +8,53 @@ export default class AdvancedComments extends Plugin {
 			name: "Advanced Comments",
 			editorCallback: (editor) => this.advancedComments(editor),
 		});
+
+		this.addCommand({
+			id: "trim-end-all-doc",
+			name: "Trim End All Doc",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				const value = editor.getValue().replace(/[ \t]+$/gm, "");
+				editor.setValue(value);
+			},
+		});
+
+		this.addCommand({
+			id: "trim-end-code-blocks",
+			name: "Trim End Code Blocks",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				const value = editor
+					.getValue()
+					.replace(
+						/^```([a-z0-9-+]+)\n([\s\S]*?)\n```$/gim,
+						(match, p1, p2) => {
+							return (
+								"```" +
+								p1 +
+								"\n" +
+								p2.replace(/[ \t]+$/gm, "") +
+								"\n```"
+							);
+						}
+					);
+				editor.setValue(value);
+			},
+		});
 	}
 
 	advancedComments = (editor: Editor): void => {
-		const { selection, value } = this.getSelectionAndValue(editor);
+		// eslint-disable-next-line prefer-const
+		let { selection, value } = this.getSelectionAndValue(editor);
 
 		if (!selection) {
-			return;
+			const curs = editor.getCursor();
+			const line = curs.line;
+			selection = editor.getLine(line);
+			if (selection.trim() === "") return;
 		}
 
-		const { line: anchor, ch: anchorChar } = editor.getCursor("from");
-		const { line: head, ch: headChar } = editor.getCursor("to");
-
-		const codeBlockType = this.getCodeBlockType(editor, value, selection);
-		const { commentedSelection, useSelection } = commentSelection({
-			selection,
-			codeBlockType,
-		});
-
-		editor.replaceSelection(commentedSelection);
-		const offset = commentedSelection.length - selection.length;
-		const lastLine = Math.max(head, anchor);
-		const firstLine = Math.min(head, anchor);
-		const firstLineChar = firstLine === anchor ? anchorChar : headChar;
-		const lastLineChar = lastLine === head ? headChar : anchorChar;
-		// console.log(
-		// 	`firstLine: ${firstLine}, 
-		// 	lastLine: ${lastLine}, 
-		// 	firstLineChar: ${firstLineChar}, 
-		// 	lastLineChar: ${lastLineChar}`
-		// );
-		if (useSelection)
-			editor.setSelection(
-				{ line: firstLine, ch: firstLineChar },
-				{ line: lastLine, ch: lastLineChar + offset / 2 } //bout de ligne?
-			);
+		const { pi, pr, sel } = getPosToOffset(editor, selection);
+		const codeBlockType = this.getCodeBlockType(editor, value, sel, pi, pr);
+		commentSelection(editor, sel, codeBlockType);
 	};
 
 	getSelectionAndValue = (editor: Editor) => {
@@ -54,19 +66,19 @@ export default class AdvancedComments extends Plugin {
 	getCodeBlockType = (
 		editor: Editor,
 		value: string,
-		selection: string
+		sel: string,
+		pi: number,
+		pr: number
 	): string | null => {
-		const codeBlockRegex = /^```([a-z0-9-+]+)\n([\s\S]*?)\n```$/gm;
+		const codeBlockRegex = /^```([a-z0-9-+]+)\n([\s\S]*?)\n```$/gim; //case-insensitive
 		let codeBlockMatch;
-		const startOffset = editor.posToOffset(editor.getCursor("from"));
-		const endOffset = editor.posToOffset(editor.getCursor("to"));
-		const cursorIndex = Math.min(startOffset, endOffset);
-
+		const cursorIndex = Math.min(pi, pr);
 		while ((codeBlockMatch = codeBlockRegex.exec(value))) {
+			// find in what codeblock selection is
 			if (
 				codeBlockMatch.index <= cursorIndex &&
 				codeBlockMatch.index + codeBlockMatch[0].length >=
-					cursorIndex + selection.length
+					cursorIndex + sel.length
 			) {
 				return codeBlockMatch[1];
 			}
