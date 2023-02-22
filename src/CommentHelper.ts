@@ -17,10 +17,12 @@ function commentType(codeBlockType: string) {
 		"less",
 		"scss",
 		"css",
+		"jsonc",
+		"dataviewjs",
 	];
-	const hashTypes = ["python", "ruby", "bash"];
+	const hashTypes = ["python", "ruby", "bash", "zsh", "sh", "applescript", "yaml", "yml"];
 	const lua = ["lua", "sql"];
-	const html = ["html", "xml"];
+	const html = ["html", "xml", "md"];
 
 	const types = {
 		cLikeTypes: cLikeTypes,
