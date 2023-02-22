@@ -16,7 +16,6 @@ function commentType(codeBlockType: string) {
 		"jsx",
 		"less",
 		"scss",
-		"css",
 		"jsonc",
 		"dataviewjs",
 	];
@@ -70,7 +69,7 @@ export function commentSelection(
 			} else {
 				commentedSelection = selection.replace(/^(.*)$/gm, `-- $1`);
 			}
-		} else {
+		} else if (varName === "html"){
 			const pattern = /^<!--\s?(.*)\s?-->$/gms;
 			if (pattern.test(selection)) {
 				commentedSelection = selection.replace(pattern, `$1`);
@@ -80,6 +79,8 @@ export function commentSelection(
 					`<!-- $1  -->`
 				);
 			}
+		}else {
+			return
 		}
 	} else {
 		const pattern = /^%%(.*)%%$/gms;
