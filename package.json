@@ -1,7 +1,7 @@
 {
 	"name": "contextual-comments",
 	"version": "1.1.0",
-	"description": "general comments or langage related (in codeblocks) + 2 commands to trim end lines (All doc/codeblocks)",
+	"description": "General comments or langage related (in codeblocks) + 2 commands trim end lines (All doc/codeblocks).",
 	"main": "src/main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
