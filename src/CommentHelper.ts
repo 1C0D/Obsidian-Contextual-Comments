@@ -19,10 +19,19 @@ function commentType(codeBlockType: string) {
 		"jsonc",
 		"dataviewjs",
 	];
-	const hashTypes = ["python", "ruby", "bash", "zsh", "sh", "applescript", "yaml", "yml"];
+	const hashTypes = [
+		"python",
+		"ruby",
+		"bash",
+		"zsh",
+		"sh",
+		"applescript",
+		"yaml",
+		"yml",
+	];
 	const lua = ["lua", "sql"];
 	const html = ["html", "xml", "md"];
-	const templater =["templater"]
+	const templater = ["templater"];
 
 	const types = {
 		cLikeTypes: cLikeTypes,
@@ -31,7 +40,6 @@ function commentType(codeBlockType: string) {
 		html: html,
 		templater: templater,
 	};
-
 
 	for (const [name, values] of Object.entries(types)) {
 		if (values.includes(codeBlockType.toLowerCase())) {
@@ -50,9 +58,8 @@ export function commentSelection(
 	let commentedSelection = "";
 
 	if (codeBlockType) {
-		
 		const varName = commentType(codeBlockType);
-		if (varName === "cLikeTypes") {
+		if (varName === "cLikeTypes" || varName === "templater") {
 			const pattern = /^\/\/\s?(.*)$/gm;
 			if (pattern.test(selection)) {
 				commentedSelection = selection.replace(pattern, `$1`);
@@ -73,7 +80,7 @@ export function commentSelection(
 			} else {
 				commentedSelection = selection.replace(/^(.*)$/gm, `-- $1`);
 			}
-		} else if (varName === "html"){
+		} else if (varName === "html") {
 			const pattern = /^<!--\s?(.*)\s?-->$/gms;
 			if (pattern.test(selection)) {
 				commentedSelection = selection.replace(pattern, `$1`);
@@ -83,22 +90,8 @@ export function commentSelection(
 					`<!-- $1  -->`
 				);
 			}
-		}		if (varName === "cLikeTypes") {
-			const pattern = /^\/\/\s?(.*)$/gm;
-			if (pattern.test(selection)) {
-				commentedSelection = selection.replace(pattern, `$1`);
-			} else {
-				commentedSelection = selection.replace(/^(.*)$/gm, `// $1`);
-			}
-		}else if (varName === "templater") {
-			const pattern = /^\/\/\s?(.*)$/gm;
-			if (pattern.test(selection)) {
-				commentedSelection = selection.replace(pattern, `$1`);
-			} else {
-				commentedSelection = selection.replace(/^(.*)$/gm, `// $1`);
-			}
-		}else {
-			return
+		} else {
+			return;
 		}
 	} else {
 		const pattern = /^%%(.*)%%$/gms;
@@ -109,15 +102,14 @@ export function commentSelection(
 		}
 	}
 
-
-	const {pi, pr} = getPosToOffset(editor, selection)
+	const { pi, pr } = getPosToOffset(editor, selection);
 	const from = editor.offsetToPos(pi);
 	const to = editor.offsetToPos(pr);
 
 	editor.replaceRange(commentedSelection, from, to);
 }
 
-export function getPosToOffset(editor:Editor, sel:string) {
+export function getPosToOffset(editor: Editor, sel: string) {
 	let i = editor.getCursor("from");
 	let r = editor.getCursor("to");
 	let pi = editor.posToOffset(i);
@@ -126,11 +118,11 @@ export function getPosToOffset(editor:Editor, sel:string) {
 	if (pi === pr) {
 		const curs = editor.getCursor();
 		const line = curs.line;
-		const value = sel = editor.getLine(line);
+		const value = (sel = editor.getLine(line));
 		i = { line: line, ch: 0 };
 		r = { line: line, ch: value.length };
 		pi = editor.posToOffset(i);
 		pr = editor.posToOffset(r);
 	}
-	return {pi,pr,sel}
+	return { pi, pr, sel };
 }
