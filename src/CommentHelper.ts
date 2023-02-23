@@ -22,13 +22,16 @@ function commentType(codeBlockType: string) {
 	const hashTypes = ["python", "ruby", "bash", "zsh", "sh", "applescript", "yaml", "yml"];
 	const lua = ["lua", "sql"];
 	const html = ["html", "xml", "md"];
+	const templater =["templater"]
 
 	const types = {
 		cLikeTypes: cLikeTypes,
 		hashTypes: hashTypes,
 		lua: lua,
 		html: html,
+		templater: templater,
 	};
+
 
 	for (const [name, values] of Object.entries(types)) {
 		if (values.includes(codeBlockType.toLowerCase())) {
@@ -47,6 +50,7 @@ export function commentSelection(
 	let commentedSelection = "";
 
 	if (codeBlockType) {
+		
 		const varName = commentType(codeBlockType);
 		if (varName === "cLikeTypes") {
 			const pattern = /^\/\/\s?(.*)$/gm;
@@ -78,6 +82,20 @@ export function commentSelection(
 					/^(.*)$/gms,
 					`<!-- $1  -->`
 				);
+			}
+		}		if (varName === "cLikeTypes") {
+			const pattern = /^\/\/\s?(.*)$/gm;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gm, `// $1`);
+			}
+		}else if (varName === "templater") {
+			const pattern = /^\/\/\s?(.*)$/gm;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gm, `// $1`);
 			}
 		}else {
 			return

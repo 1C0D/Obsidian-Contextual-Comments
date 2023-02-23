@@ -53,7 +53,7 @@ export default class AdvancedComments extends Plugin {
 		}
 
 		const { pi, pr, sel } = getPosToOffset(editor, selection);
-		const codeBlockType = this.getCodeBlockType(editor, value, sel, pi, pr);
+		const codeBlockType = this.getBlockType(editor, value, sel, pi, pr);
 		commentSelection(editor, sel, codeBlockType);
 	};
 
@@ -63,7 +63,7 @@ export default class AdvancedComments extends Plugin {
 		return { selection, value };
 	};
 
-	getCodeBlockType = (
+	getBlockType = (
 		editor: Editor,
 		value: string,
 		sel: string,
@@ -71,18 +71,28 @@ export default class AdvancedComments extends Plugin {
 		pr: number
 	): string | null => {
 		const codeBlockRegex = /^```([a-z0-9-+]+)\n([\s\S]*?)\n```$/gim; //case-insensitive
-		let codeBlockMatch;
+		const templateBlockRegex = /^<%\*(.*?)%>$/gms;
+
 		const cursorIndex = Math.min(pi, pr);
-		while ((codeBlockMatch = codeBlockRegex.exec(value))) {
-			// find in what codeblock selection is
+
+		let blockMatch;
+
+		while (
+			(blockMatch =
+				codeBlockRegex.exec(value) || templateBlockRegex.exec(value))
+		) {
+			// find in what block selection is
 			if (
-				codeBlockMatch.index <= cursorIndex &&
-				codeBlockMatch.index + codeBlockMatch[0].length >=
+				blockMatch.index <= cursorIndex &&
+				blockMatch.index + blockMatch[0].length >=
 					cursorIndex + sel.length
 			) {
-				return codeBlockMatch[1];
+				return codeBlockRegex.test(blockMatch[0])
+					? blockMatch[1]
+					: "templater";
 			}
 		}
 		return null;
 	};
+
 }
