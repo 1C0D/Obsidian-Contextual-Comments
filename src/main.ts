@@ -70,7 +70,7 @@ export default class AdvancedComments extends Plugin {
 		pi: number,
 		pr: number
 	): string | null => {
-		const codeBlockRegex = /^```([a-z0-9-+]+)\n([\s\S]*?)\n```$/gim; //case-insensitive
+		const codeBlockRegex = /^```([a-z0-9-+]*)\n([\s\S]+?)\n```$/gim; //case-insensitive
 		const templateBlockRegex = /^<%\*(.*?)%>$/gms;
 
 		const cursorIndex = Math.min(pi, pr);

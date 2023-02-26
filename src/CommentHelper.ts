@@ -18,6 +18,7 @@ function commentType(codeBlockType: string) {
 		"scss",
 		"jsonc",
 		"dataviewjs",
+		""
 	];
 	const hashTypes = [
 		"python",
