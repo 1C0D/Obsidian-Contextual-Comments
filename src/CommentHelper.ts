@@ -16,22 +16,12 @@ function commentType(codeBlockType: string) {
 		"jsx",
 		"less",
 		"scss",
-		"jsonc",
-		"dataviewjs",
-		""
+		"empty",
 	];
-	const hashTypes = [
-		"python",
-		"ruby",
-		"bash",
-		"zsh",
-		"sh",
-		"applescript",
-		"yaml",
-		"yml",
-	];
+	const hashTypes = ["python", "ruby", "bash"];
 	const lua = ["lua", "sql"];
-	const html = ["html", "xml", "md"];
+	const html = ["html", "xml"];
+	const css = ["css"];
 	const templater = ["templater"];
 
 	const types = {
@@ -39,6 +29,7 @@ function commentType(codeBlockType: string) {
 		hashTypes: hashTypes,
 		lua: lua,
 		html: html,
+		css: css,
 		templater: templater,
 	};
 
@@ -80,6 +71,14 @@ export function commentSelection(
 				commentedSelection = selection.replace(pattern, `$1`);
 			} else {
 				commentedSelection = selection.replace(/^(.*)$/gm, `-- $1`);
+			}
+		} else if (varName === "css") {
+			const pattern = /^\/\*\s?(.*)\s?\*\/$/gms;
+			if (pattern.test(selection)) {
+				console.log("ici");
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gms, `/* $1 */`);
 			}
 		} else if (varName === "html") {
 			const pattern = /^<!--\s?(.*)\s?-->$/gms;

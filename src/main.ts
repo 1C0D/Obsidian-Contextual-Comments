@@ -70,29 +70,31 @@ export default class AdvancedComments extends Plugin {
 		pi: number,
 		pr: number
 	): string | null => {
-		const codeBlockRegex = /^```([a-z0-9-+]*)\n([\s\S]+?)\n```$/gim; //case-insensitive
+		const codeBlockRegex = /^```([a-z0-9-+]*)\n([\s\S]*?)\n```$/gim; //case-insensitive
 		const templateBlockRegex = /^<%\*(.*?)%>$/gms;
-
 		const cursorIndex = Math.min(pi, pr);
-
 		let blockMatch;
 
-		while (
-			(blockMatch =
-				codeBlockRegex.exec(value) || templateBlockRegex.exec(value))
-		) {
+		while ((blockMatch = codeBlockRegex.exec(value))) {
 			// find in what block selection is
 			if (
 				blockMatch.index <= cursorIndex &&
 				blockMatch.index + blockMatch[0].length >=
 					cursorIndex + sel.length
 			) {
-				return codeBlockRegex.test(blockMatch[0])
-					? blockMatch[1]
-					: "templater";
+				return blockMatch[1] ? blockMatch[1] : "empty"
+			}
+		}
+		while ((blockMatch = templateBlockRegex.exec(value))) {
+			// find in what block selection is
+			if (
+				blockMatch.index <= cursorIndex &&
+				blockMatch.index + blockMatch[0].length >=
+					cursorIndex + sel.length
+			) {
+				return "templater";
 			}
 		}
 		return null;
 	};
-
 }
