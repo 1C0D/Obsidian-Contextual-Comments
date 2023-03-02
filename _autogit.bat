@@ -20,6 +20,8 @@ set remoteUrl=
 for /f "tokens=2" %%a in ('git remote get-url origin') do set remoteUrl=%%a
 if not "%remoteUrl%" == "" start "" "%remoteUrl%"
 
+echo %remoteUrl%
+
 rem Pause the console to keep it open
 pause
 
