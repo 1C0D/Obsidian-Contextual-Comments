@@ -10,7 +10,7 @@ rem Commit the changes with the specified commit message
 git commit -m "%commitMessage%"
 
 rem Display the status of the Git repository
-REM git status
+git status
 
 rem Pause the console to keep it open
 pause
