@@ -14,8 +14,8 @@ git status
 
 
 for /f "usebackq" %%G in (`git config --get remote.origin.url`) do set remoteUrl=%%G
-REM set remoteUrl=!remoteUrl:.git=!
-start "" "github.com/%remoteUrl%"
+set remoteUrl=!remoteUrl:.git=!
+start "" "%remoteUrl%"
 
 
 REM git remote -v
