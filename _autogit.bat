@@ -1,4 +1,4 @@
-@echo off
+@echo on
 
 rem Prompt the user for a commit message
 set /p commitMessage="Enter commit message: "
