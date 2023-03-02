@@ -39,7 +39,7 @@ for /f "usebackq" %%G in (`git config --get remote.origin.url`) do set remoteUrl
 start "" "%remoteUrl%"
 
 REM del the file created by the prompt // mettre en attente
-del your
+REM del your
 
 rem Pause the console to keep it open
 pause
