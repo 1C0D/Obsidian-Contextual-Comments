@@ -18,11 +18,12 @@ function commentType(codeBlockType: string) {
 		"scss",
 		"empty",
 	];
-	const hashTypes = ["python", "ruby", "bash"];
+	const hashTypes = ["python", "py", "ruby", "bash", "ps1"];
 	const lua = ["lua", "sql"];
 	const html = ["html", "xml"];
 	const css = ["css"];
 	const templater = ["templater"];
+	const bat = ["bat"];
 
 	const types = {
 		cLikeTypes: cLikeTypes,
@@ -31,6 +32,7 @@ function commentType(codeBlockType: string) {
 		html: html,
 		css: css,
 		templater: templater,
+		bat: bat,
 	};
 
 	for (const [name, values] of Object.entries(types)) {
@@ -71,6 +73,13 @@ export function commentSelection(
 				commentedSelection = selection.replace(pattern, `$1`);
 			} else {
 				commentedSelection = selection.replace(/^(.*)$/gm, `-- $1`);
+			}
+		} else if (varName === "bat") {
+			const pattern = /^[Rr][Ee][Mm]\s?(.*)$/gm;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gm, `REM $1`);
 			}
 		} else if (varName === "css") {
 			const pattern = /^\/\*\s?(.*)\s?\*\/$/gms;
