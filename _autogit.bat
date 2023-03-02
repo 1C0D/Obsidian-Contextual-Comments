@@ -12,12 +12,18 @@ git commit -m "%commitMessage%"
 rem Display the status of the Git repository
 git status
 
+
+for /f "usebackq" %%G in (`git config --get remote.origin.url`) do set remoteUrl=%%G
+REM set remoteUrl=!remoteUrl:.git=!
+start "" "github.com/%remoteUrl%"
+
+
 REM git remote -v
-for /f "tokens=2" %%a in ('git config --get remote.origin.url') do (
-  set giturl=%%a
-  set giturl=!giturl/git\@github\.com\:/https://github.com/!
-  start "" "!giturl!"
-)
+REM for /f "tokens=2" %%a in ('git config --get remote.origin.url') do (
+  REM set giturl=%%a
+  REM set giturl=!giturl/git\@github\.com\:/https://github.com/!
+  REM start "" "!giturl!"
+REM )
 
 rem Pause the console to keep it open
 pause
