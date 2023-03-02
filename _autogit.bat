@@ -20,11 +20,12 @@ for /f "tokens=2" %%a in ('git remote get-url origin') do (
   start "" tmpfile.txt
   
   
-  REM start "" "!remoteUrl!"
+  start "" "!remoteUrl!"
 )
 
 rem Pause the console to keep it open
 pause
+
 
 
 
