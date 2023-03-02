@@ -15,13 +15,15 @@ REM git push
 rem Display the status of the Git repository
 git status
 
+rem Display all environment variables, including remoteUrl
+set
+
 rem Open the GitHub repository page
 set remoteUrl=
 for /f "tokens=2" %%a in ('git remote get-url origin') do set remoteUrl=%%a
 if not "%remoteUrl%" == "" start "" "%remoteUrl%"
-@echo on
-echo %remoteUrl%
 
 rem Pause the console to keep it open
 pause
+
 
