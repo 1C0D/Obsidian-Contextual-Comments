@@ -12,18 +12,13 @@ git commit -m "%commitMessage%"
 rem Display the status of the Git repository
 git status
 
-REM git remote -v
-for /f "tokens=2" %%a in ('git remote get-url origin') do (
-  set remoteUrl=%%a
-  set remoteUrl=!remoteUrl:.git=!
-  start "" "https://github.com/%remoteUrl%"
+REM get the remote URL and open it in the default browser
+for /f "tokens=2" %%a in ('git config --get remote.origin.url') do (
+  start "" "%%a"
 )
 
 rem Pause the console to keep it open
 pause
-
-
-
 
 
 
