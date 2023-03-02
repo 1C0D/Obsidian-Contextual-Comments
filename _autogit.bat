@@ -16,7 +16,11 @@ REM git remote -v
 for /f "tokens=2" %%a in ('git remote get-url origin') do (
   set remoteUrl=%%a
   set remoteUrl=!remoteUrl:.git=!
-  start "" "!remoteUrl!"
+  echo !remoteUrl! > tmpfile.txt
+  start "" tmpfile.txt
+  
+  
+  REM start "" "!remoteUrl!"
 )
 
 rem Pause the console to keep it open
