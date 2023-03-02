@@ -12,13 +12,27 @@ git commit -m "%commitMessage%"
 rem Display the status of the Git repository
 git status
 
-for /f "tokens=2" %%a in ('git remote -v ^| head -n 1 ^| awk -F " " "{print $2}" ^| sed "s/\.git//g"') do (
-  set remoteUrl=%%a
-  start "" "!remoteUrl!"
+REM git remote -v
+for /f "tokens=2" %%a in ('git config --get remote.origin.url') do (
+  set giturl=%%a
+  set giturl=!giturl/git\@github\.com\:/https://github.com/!
+  set giturl=!giturl/\.git/\/tree/!
+  start "" "!giturl!"
 )
 
 rem Pause the console to keep it open
 pause
+
+REM giturl=$(git config --get remote.origin.url) 
+REM giturl=${giturl/git\@github\.com\:/https://github.com/}
+REM giturl=${giturl/\.git/\/tree/}
+REM branch="$(git symbolic-ref HEAD 2>/dev/null)" ||
+REM branch="(unnamed branch)"     # detached HEAD
+REM branch=${branch##refs/heads/}
+REM giturl=$giturl/tree/$branch
+REM start $giturl
+
+
 
 
 
