@@ -15,7 +15,10 @@ git status
 for /f "tokens=2" %%a in ('git remote get-url origin') do (
   set remoteUrl=%%a
   set remoteUrl=!remoteUrl:.git=!
-  echo !remoteUrl!
+  REM echo !remoteUrl!
+  echo Remote URL before: %remoteUrl%
+  echo !remoteUrl! > tmpfile.txt
+  echo Remote URL after: %remoteUrl%
 
   
   REM Open the URL in the default web browser
