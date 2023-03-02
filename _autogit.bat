@@ -16,7 +16,6 @@ REM git remote -v
 for /f "tokens=2" %%a in ('git config --get remote.origin.url') do (
   set giturl=%%a
   set giturl=!giturl/git\@github\.com\:/https://github.com/!
-  set giturl=!giturl/\.git/\/tree/!
   start "" "!giturl!"
 )
 
