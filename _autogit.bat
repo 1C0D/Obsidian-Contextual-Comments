@@ -15,8 +15,8 @@ git status
 
 for /f "usebackq" %%G in (`git config --get remote.origin.url`) do set remoteUrl=%%G
 REM set remoteUrl=!remoteUrl:.git=!
-start "" "https://github.com/%remoteUrl%"
-
+start "" "%remoteUrl%"
+REM https://github.com/https://github.com/1C0D/Obsidian-Contextual-Comments.git
 
 REM git remote -v
 REM for /f "tokens=2" %%a in ('git config --get remote.origin.url') do (
