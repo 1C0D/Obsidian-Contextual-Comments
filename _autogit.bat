@@ -12,19 +12,17 @@ git commit -m "%commitMessage%"
 rem Display the status of the Git repository
 git status
 
-REM git remote -v
 for /f "tokens=2" %%a in ('git remote get-url origin') do (
   set remoteUrl=%%a
   set remoteUrl=!remoteUrl:.git=!
-  echo !remoteUrl! > tmpfile.txt
-  start "" tmpfile.txt
   
-  
-  start "" "!remoteUrl!"
+  REM Open the URL in the default web browser
+  explorer "!remoteUrl!"
 )
 
 rem Pause the console to keep it open
 pause
+
 
 
 
