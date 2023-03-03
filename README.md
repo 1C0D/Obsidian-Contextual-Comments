@@ -1,4 +1,4 @@
-# Advanced Comments
+# Contextual Comments
 
 - Toggle comments in code blocks (depending on the language) by selecting text you want to comment.
 - Comment the whole line at cursor position without selection.
