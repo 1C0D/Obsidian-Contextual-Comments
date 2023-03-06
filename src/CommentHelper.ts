@@ -54,25 +54,27 @@ export function commentSelection(
 	if (codeBlockType) {
 		const varName = commentType(codeBlockType);
 		if (varName === "cLikeTypes" || varName === "templater") {
-			const pattern = /^\/\/\s?(.*)$/gm;
+			console.log("ici")
+			const pattern = /^(\s*)\/\/\s?(.*)$/gm;
 			if (pattern.test(selection)) {
-				commentedSelection = selection.replace(pattern, `$1`);
+				commentedSelection = selection.replace(pattern, `$1$2`);
 			} else {
-				commentedSelection = selection.replace(/^(.*)$/gm, `// $1`);
+				console.log("là")
+				commentedSelection = selection.replace(/^(\s*)(.*)$/gm, `$1// $2`);
 			}
 		} else if (varName === "hashTypes") {
-			const pattern = /^#\s?(.*)$/gm;
+			const pattern = /^(\s*)#\s?(.*)$/gm;
 			if (pattern.test(selection)) {
-				commentedSelection = selection.replace(pattern, `$1`);
+				commentedSelection = selection.replace(pattern, `$1$2`);
 			} else {
-				commentedSelection = selection.replace(/^(.*)$/gm, `# $1`);
+				commentedSelection = selection.replace(/^(\s*)(.*)$/gm, `$1# $2`);
 			}
 		} else if (varName === "lua") {
-			const pattern = /^--\s?(.*)$/gm;
+			const pattern = /^(\s*)--\s?(.*)$/gm;
 			if (pattern.test(selection)) {
-				commentedSelection = selection.replace(pattern, `$1`);
+				commentedSelection = selection.replace(pattern, `$1$2`);
 			} else {
-				commentedSelection = selection.replace(/^(.*)$/gm, `-- $1`);
+				commentedSelection = selection.replace(/^(\s*)(.*)$/gm, `$1-- $2`);
 			}
 		} else if (varName === "bat") {
 			const pattern = /^[Rr][Ee][Mm]\s?(.*)$/gm;
