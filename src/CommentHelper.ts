@@ -1,4 +1,5 @@
 import { Editor, MarkdownView } from "obsidian";
+import AdvancedComments from "./main";
 
 function commentType(codeBlockType: string) {
 	const cLikeTypes = [
@@ -32,6 +33,7 @@ function commentType(codeBlockType: string) {
 		"yaml",
 		"yml",
 	];
+
 	const lua = ["lua", "sql"];
 	const html = ["html", "xml", "md"];
 	const css = ["css"];
@@ -60,13 +62,17 @@ function commentType(codeBlockType: string) {
 export function commentSelection(
 	editor: Editor,
 	selection: string,
-	codeBlockType: string | null
+	codeBlockType: string | null,
+	blockComment: boolean
 ) {
 	let commentedSelection = "";
 
 	if (codeBlockType) {
 		const varName = commentType(codeBlockType);
-		if (varName === "cLikeTypes" || varName === "templater") {
+		if (
+			(varName === "cLikeTypes" && !blockComment) ||
+			varName === "templater"
+		) {
 			const pattern = /^(\s*)\/\/\s?(.*)$/gm;
 			if (pattern.test(selection)) {
 				commentedSelection = selection.replace(pattern, `$1$2`);
@@ -75,6 +81,16 @@ export function commentSelection(
 					/^(\s*)(.*)$/gm,
 					`$1// $2`
 				);
+			}
+		} else if (
+			(blockComment && varName === "cLikeTypes") ||
+			varName === "css"
+		) {
+			const pattern = /^\/\*\s?(.*)\s?\*\/$/gms;
+			if (pattern.test(selection)) {
+				commentedSelection = selection.replace(pattern, `$1`);
+			} else {
+				commentedSelection = selection.replace(/^(.*)$/gms, `/* $1 */`);
 			}
 		} else if (varName === "hashTypes") {
 			const pattern = /^(\s*)#\s?(.*)$/gm;
@@ -103,13 +119,6 @@ export function commentSelection(
 			} else {
 				commentedSelection = selection.replace(/^(.*)$/gm, `REM $1`);
 			}
-		} else if (varName === "css") {
-			const pattern = /^\/\*\s?(.*)\s?\*\/$/gms;
-			if (pattern.test(selection)) {
-				commentedSelection = selection.replace(pattern, `$1`);
-			} else {
-				commentedSelection = selection.replace(/^(.*)$/gms, `/* $1 */`);
-			}
 		} else if (varName === "html") {
 			const pattern = /^<!--\s?(.*)\s?-->$/gms;
 			if (pattern.test(selection)) {
@@ -132,28 +141,32 @@ export function commentSelection(
 		}
 	}
 
-	const { pi, pr } = getPosToOffset(editor, selection);
+	const { pi, pr } = getPosToOffset(editor, selection, blockComment);
 	const from = editor.offsetToPos(pi);
 	const to = editor.offsetToPos(pr);
 
 	editor.replaceRange(commentedSelection, from, to);
 }
 
-export function getPosToOffset(editor: Editor, sel: string) {
+export function getPosToOffset(
+	editor: Editor,
+	sel: string,
+	blockComment: boolean
+) {
 	let i = editor.getCursor("from");
 	let r = editor.getCursor("to");
 	let pi = editor.posToOffset(i);
 	let pr = editor.posToOffset(r);
 	const value = editor.getLine(r.line);
 
-
-	if (pi === pr) {
+	if (!blockComment && pi === pr) {
 		i = { line: r.line, ch: 0 };
 		r = { line: r.line, ch: value.length };
 		pi = editor.posToOffset(i);
 		pr = editor.posToOffset(r);
 		sel = value;
 	} else if (
+		!blockComment &&
 		i.line !== r.line &&
 		(i.ch != 0 || r.ch != editor.getLine(r.line).length)
 	) {

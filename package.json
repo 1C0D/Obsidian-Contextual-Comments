@@ -1,6 +1,6 @@
 {
 	"name": "contextual-comments",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"description": "General comments or langage related (in codeblocks) + 2 commands trim end lines (All doc/codeblocks).",
 	"main": "src/main.js",
 	"scripts": {

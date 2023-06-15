@@ -1,12 +1,20 @@
-import { Editor, MarkdownView, Plugin } from "obsidian";
+import { App, Editor, MarkdownView, Plugin } from "obsidian";
 import { commentSelection, getPosToOffset } from "./CommentHelper";
 
 export default class AdvancedComments extends Plugin {
+
 	async onload() {
 		this.addCommand({
 			id: "advanced-comments",
-			name: "Advanced Comments",
+			name: "Line Comments",
 			editorCallback: (editor) => this.advancedComments(editor),
+		});
+		this.addCommand({
+			id: "advanced-blockComments",
+			name: "Block Comments",
+			editorCallback: (editor) => {
+				this.advancedComments(editor, true);
+			},
 		});
 
 		this.addCommand({
@@ -41,20 +49,19 @@ export default class AdvancedComments extends Plugin {
 		});
 	}
 
-	advancedComments = (editor: Editor): void => {
+	advancedComments = (editor: Editor, blockComment: boolean=false): void => {
 		// eslint-disable-next-line prefer-const
 		let { selection, value } = this.getSelectionAndValue(editor);
-
-		if (!selection) {
+		if (!blockComment && !selection) {
 			const curs = editor.getCursor();
 			const line = curs.line;
 			selection = editor.getLine(line);
 			if (selection.trim() === "") return;
 		}
 
-		const { pi, pr, sel } = getPosToOffset(editor, selection);
+		const { pi, pr, sel } = getPosToOffset(editor, selection,blockComment);
 		const codeBlockType = this.getBlockType(editor, value, sel, pi, pr);
-		commentSelection(editor, sel, codeBlockType);
+		commentSelection(editor, sel, codeBlockType,blockComment);
 	};
 
 	getSelectionAndValue = (editor: Editor) => {
