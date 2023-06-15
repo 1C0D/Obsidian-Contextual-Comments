@@ -2,6 +2,7 @@
 
 - Toggle comments in code blocks (depending on the language) by selecting text you want to comment.
 - Comment the whole line at cursor position without selection.
+- if you select partially one line, it will comment from the beginning of the selection.
 - Improved handling of normal comments (`%%...%%`)
 - Two commands to trim end lines: one for the whole document, and one for code blocks only.
 

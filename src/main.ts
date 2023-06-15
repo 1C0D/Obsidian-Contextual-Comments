@@ -82,7 +82,7 @@ export default class AdvancedComments extends Plugin {
 				blockMatch.index + blockMatch[0].length >=
 					cursorIndex + sel.length
 			) {
-				return blockMatch[1] ? blockMatch[1] : "empty"
+				return blockMatch[1] ? blockMatch[1] : "empty";
 			}
 		}
 		while ((blockMatch = templateBlockRegex.exec(value))) {

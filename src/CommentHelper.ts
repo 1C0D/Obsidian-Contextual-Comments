@@ -1,4 +1,4 @@
-import { Editor } from "obsidian";
+import { Editor, MarkdownView } from "obsidian";
 
 function commentType(codeBlockType: string) {
 	const cLikeTypes = [
@@ -144,15 +144,41 @@ export function getPosToOffset(editor: Editor, sel: string) {
 	let r = editor.getCursor("to");
 	let pi = editor.posToOffset(i);
 	let pr = editor.posToOffset(r);
+	const value = editor.getLine(r.line);
+
 
 	if (pi === pr) {
-		const curs = editor.getCursor();
-		const line = curs.line;
-		const value = (sel = editor.getLine(line));
-		i = { line: line, ch: 0 };
-		r = { line: line, ch: value.length };
+		i = { line: r.line, ch: 0 };
+		r = { line: r.line, ch: value.length };
 		pi = editor.posToOffset(i);
 		pr = editor.posToOffset(r);
+		sel = value;
+	} else if (
+		i.line !== r.line &&
+		(i.ch != 0 || r.ch != editor.getLine(r.line).length)
+	) {
+		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+		if (activeView) {
+			const data = this.app.metadataCache.getFileCache(
+				activeView.file
+			).sections;
+
+			if (
+				data.some(
+					(t: any) =>
+						t.type === "code" &&
+						t.position.start.line < i.line &&
+						t.position.end.line > r.line
+				)
+			) {
+				i = { line: i.line, ch: 0 };
+				r = { line: r.line, ch: value.length };
+				pi = editor.posToOffset(i);
+				pr = editor.posToOffset(r);
+				editor.setSelection(i, r);
+				sel = editor.getSelection();
+			}
+		}
 	}
 	return { pi, pr, sel };
 }
