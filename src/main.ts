@@ -33,14 +33,14 @@ export default class AdvancedComments extends Plugin {
 				const value = editor
 					.getValue()
 					.replace(
-						/^```([a-z0-9-+]+)\n([\s\S]*?)\n```$/gim,
-						(match, p1, p2) => {
+						/^(```|~~~)([a-z0-9-+]+)\n([\s\S]*?)\n(?:```|~~~)$/gim,
+						(match,p0, p1, p2) => {
 							return (
-								"```" +
+								p0 +
 								p1 +
 								"\n" +
 								p2.replace(/[ \t]+$/gm, "") +
-								"\n```"
+								"\n" + p0
 							);
 						}
 					);
@@ -77,7 +77,7 @@ export default class AdvancedComments extends Plugin {
 		pi: number,
 		pr: number
 	): string | null => {
-		const codeBlockRegex = /^```([a-z0-9-+]*)\n([\s\S]*?)\n```$/gim; //case-insensitive
+		const codeBlockRegex = /^(?:```|~~~)([a-z0-9-+]*)\n([\s\S]*?)\n(?:```|~~~)$/gim; //case-insensitive
 		const templateBlockRegex = /^<%\*(.*?)%>$/gms;
 		const cursorIndex = Math.min(pi, pr);
 		let blockMatch;
