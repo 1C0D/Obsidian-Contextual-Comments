@@ -137,7 +137,7 @@ export function commentSelection(
 		if (pattern.test(selection)) {
 			commentedSelection = selection.replace(pattern, `$1`);
 		} else {
-			commentedSelection = selection.replace(/^(.*)$/gms, `%%$1%%`);
+			commentedSelection = selection.replace(/^(.*)$/gms, `%% $1 %%`);
 		}
 	}
 
